@@ -1,8 +1,11 @@
 package Generic;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
+
 
     public static void main(String[] args) {
         Swap<Integer> swap = new Swap<>();
@@ -11,5 +14,9 @@ public class Main {
         System.out.println(Arrays.toString(arr));
         Swap.swap(arr, 2, 4);
         System.out.println(Arrays.toString(arr));
+
+        ArrayToList<Integer> arrtolist = new ArrayToList<>();
+        List<Integer> list = arrtolist.arrToList(new Integer[]{1,2,3,4,5});
+
     }
 }
