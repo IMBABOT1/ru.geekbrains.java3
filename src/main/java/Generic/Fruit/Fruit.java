@@ -1,10 +1,15 @@
 package Generic.Fruit;
 
-public abstract class Fruit {
+public  class Fruit {
 
-    public float getWeight() {
+
+     public Fruit(float weight) {
+          this.weight = weight;
+     }
+
+     public float getWeight() {
         return weight;
     }
 
-    private float weight;
+     float weight;
 }
