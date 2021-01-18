@@ -30,6 +30,9 @@ public class Box<T extends Fruit>{
     }
 
     public void pourOver(Box<T> another){
+        if (this == another){
+            return;
+        }
         for (Fruit f: this.list){
             another.list.add(f);
         }
