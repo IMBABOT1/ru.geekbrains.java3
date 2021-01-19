@@ -57,7 +57,7 @@ public class Main {
         }
     }
 
-    private static void fillTableExample() throws SQLException
+    private static void fillTableExample() throws SQLException{
         long time = System.currentTimeMillis();
         ps = connection.prepareStatement("INSERT INTO students (name, score) VALUES (?, ?)");
         connection.setAutoCommit(false);
