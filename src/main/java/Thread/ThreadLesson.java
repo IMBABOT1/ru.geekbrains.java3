@@ -23,7 +23,9 @@ public class ThreadLesson {
                     object.notifyAll();
                 }
             }
+
         });
+
         try {
             t.start();
             t.join();
