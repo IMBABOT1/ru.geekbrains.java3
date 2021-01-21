@@ -23,7 +23,7 @@ public class MainClass {
             new Thread(cars[i]).start();
         }
 
-
+        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
     }
 }
 
@@ -63,13 +63,11 @@ class Car implements Runnable {
         }finally {
             try {
                 cdl.await(1, TimeUnit.SECONDS);
-
+                System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
             }
         }
-
         for (int i = 0; i < race.getStages().size(); i++) {
             race.getStages().get(i).go(this);
         }
