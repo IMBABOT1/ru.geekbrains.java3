@@ -3,23 +3,28 @@ package Lesson6;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 public class MainClass {
     public static final int CARS_COUNT = 4;
-    public static CountDownLatch cdl = new CountDownLatch(CARS_COUNT);
+    public static final CountDownLatch cdl = new CountDownLatch(CARS_COUNT);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Подготовка!!!");
         Race race = new Race(new Road(60), new Tunnel(), new Road(40));
         Car[] cars = new Car[CARS_COUNT];
+
+
         for (int i = 0; i < cars.length; i++) {
             cars[i] = new Car(race, 20 + (int) (Math.random() * 10));
         }
         for (int i = 0; i < cars.length; i++) {
             new Thread(cars[i]).start();
-        }
 
+        }
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
     }
@@ -51,16 +56,21 @@ class Car implements Runnable {
     @Override
     public void run() {
         CountDownLatch cdl = new CountDownLatch(CARS_COUNT);
-
         try {
             System.out.println(this.name + " готовится");
-            cdl.countDown();
             Thread.sleep(500 + (int)(Math.random() * 800));
             System.out.println(this.name + " готов");
-            cdl.await();
+            cdl.countDown();
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            try {
+                cdl.await(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
         for (int i = 0; i < race.getStages().size(); i++) {
             race.getStages().get(i).go(this);
         }
