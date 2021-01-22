@@ -22,19 +22,24 @@ public class MainClass {
         for (int i = 0; i < cars.length; i++) {
             new Thread(cars[i]).start();
         }
+
+        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
     }
 }
 
-
 class Car implements Runnable {
     private static int CARS_COUNT;
-    private static int count;
+    public CyclicBarrier cdl;
+
     static {
         CARS_COUNT = 0;
     }
+
     private Race race;
     private int speed;
     private String name;
+    private boolean isActive;
+
     public String getName() {
         return name;
     }
@@ -42,44 +47,35 @@ class Car implements Runnable {
     public int getSpeed() {
         return speed;
     }
+
     public Car(Race race, int speed) {
         this.race = race;
         this.speed = speed;
         CARS_COUNT++;
         this.name = "Участник #" + CARS_COUNT;
+        cdl = new CyclicBarrier(1);
     }
 
     @Override
     public void run() {
-        CountDownLatch cdl = new CountDownLatch(CARS_COUNT);
         try {
             System.out.println(this.name + " готовится");
-            Thread.sleep(500 + (int)(Math.random() * 800));
+            Thread.sleep(500 + (int) (Math.random() * 800));
             System.out.println(this.name + " готов");
-            cdl.countDown();
-            count++;
-            if (count == 4){
-                System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
-            }
+            cdl.await();
+            Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            try {
-                cdl.await(1, TimeUnit.SECONDS);
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
         for (int i = 0; i < race.getStages().size(); i++) {
             race.getStages().get(i).go(this);
-
         }
     }
-
-
 }
-abstract class Stage {
+
+    abstract class Stage {
     protected int length;
     protected String description;
     public String getDescription() {
@@ -89,11 +85,10 @@ abstract class Stage {
     public abstract void go(Car c);
 }
 class Road extends Stage {
-    int count;
-    int counter = 0;
     public Road(int length) {
         this.length = length;
         this.description = "Дорога " + length + " метров";
+
     }
 
 
@@ -109,21 +104,7 @@ class Road extends Stage {
                 e.printStackTrace();
             }
             System.out.println(c.getName() + " закончил этап: " + description);
-                cyclicBarrier.await();
-            count++;
-                 if (length == 40 && count == 1){
-                     String s = c.getName();
-                     s += " WIN";
-                     System.out.println(s);
-                 }
-                 if (length == 40){
-                     counter++;
-                 }
-                 if (counter == 4){
-                     System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
-                 }
-
-
+            cyclicBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
