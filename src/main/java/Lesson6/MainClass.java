@@ -22,14 +22,13 @@ public class MainClass {
         for (int i = 0; i < cars.length; i++) {
             new Thread(cars[i]).start();
         }
-
-        System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
     }
 }
 
 
 class Car implements Runnable {
     private static int CARS_COUNT;
+    private static int count;
     static {
         CARS_COUNT = 0;
     }
@@ -58,20 +57,27 @@ class Car implements Runnable {
             Thread.sleep(500 + (int)(Math.random() * 800));
             System.out.println(this.name + " готов");
             cdl.countDown();
+            count++;
+            if (count == 4){
+                System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
             try {
                 cdl.await(1, TimeUnit.SECONDS);
-                System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка началась!!!");
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         for (int i = 0; i < race.getStages().size(); i++) {
             race.getStages().get(i).go(this);
+
         }
     }
+
+
 }
 abstract class Stage {
     protected int length;
@@ -83,10 +89,11 @@ abstract class Stage {
     public abstract void go(Car c);
 }
 class Road extends Stage {
+    int count;
+    int counter = 0;
     public Road(int length) {
         this.length = length;
         this.description = "Дорога " + length + " метров";
-
     }
 
 
@@ -102,7 +109,21 @@ class Road extends Stage {
                 e.printStackTrace();
             }
             System.out.println(c.getName() + " закончил этап: " + description);
-                 cyclicBarrier.await();
+                cyclicBarrier.await();
+            count++;
+                 if (length == 40 && count == 1){
+                     String s = c.getName();
+                     s += " WIN";
+                     System.out.println(s);
+                 }
+                 if (length == 40){
+                     counter++;
+                 }
+                 if (counter == 4){
+                     System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
+                 }
+
+
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
